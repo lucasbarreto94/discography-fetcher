@@ -33,11 +33,17 @@ class Authenticate
      * @param  string|null  $guard
      * @return mixed
      */
+
     public function handle($request, Closure $next, $guard = null)
     {
-        if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
-        }
+        // if($request->path() == 'login' || $request->path() == 'authentication' || $request->path() == 'callback') {
+        //     return $next($request);
+        // }
+        // if (!isset($_SESSION['principal'])) {
+        //     // $_SESSION['lastUrlBeforeLogin'] = $request->url();
+        //     // dd($_SESSION['lastUrlBeforeLogin']);
+        //     return redirect('login');
+        // }
 
         return $next($request);
     }
