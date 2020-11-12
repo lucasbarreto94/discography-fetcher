@@ -1,7 +1,6 @@
 <?php
-
+use Illuminate\Http\Request;
 /** @var \Laravel\Lumen\Routing\Router $router */
-
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -13,6 +12,19 @@
 |
 */
 
+$config = include('../config.php');
+$baseRoute = $config['baseRouteApi'];
+
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->get($baseRoute.'/albums', 'DiscographyController@getAlbums');
+
+$router->get('/login', function(){
+    return view('login');
+});
+
+$router->get('/authentication', ['as'=>'authentication', 'uses'=>'AuthenticationController@authenticate']);
+
+$router->get('/callback',  ['as'=>'callback', 'uses'=>'AuthenticationController@callback']);
