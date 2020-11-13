@@ -2,6 +2,14 @@
 
 An application that allows you to get the entire discography of a band/artist using the spotify api
 
+Es necesario ejecutar composer install
+Url para login y obtención de token http://localhost/login
+GET albums http://localhost/api/v1/albums?q={artist-name}
+El token debe enviarse mediante el header Authentication <token> ###Sin el prefijo bearer
+    
+##Levantar server utilizando el comando php -S localhost:80 -t ./public
+
+
 # Lumen PHP Framework
 
 [![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
