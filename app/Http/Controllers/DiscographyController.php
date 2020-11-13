@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Http\dto\DTOAlbum;
-
+use App\Http\ApiClients\SpotifyApiClient;
 //use App\User;
 
 class DiscographyController extends Controller
@@ -15,23 +15,28 @@ class DiscographyController extends Controller
      * @param  Request $request
      * @return Response
      */
+    protected $spotifyApiClient;
+
+    public function __construct()
+    {
+        $this->spotifyApiClient = new SpotifyApiClient();
+    }
+
     public function getAlbums(Request $request)
     {
         $artist = $request->query()['q'];
 
-        $response = Http::withToken($request->header('Authorization'))->get('https://api.spotify.com/v1/search?q='.$artist.'&type=artist');
-        
-        if($response->status() == 401){
+        $bands = $this->spotifyApiClient->getArtistsByName($artist, $request->header('Authorization'));
+
+        if (!isset($bands)){
             return response()->json(['error' => 'Unauthenticated.'], 401);
-        };
-        
-        $band = json_decode($response->body());
-        if($band->artists->items == []){
+        }
+        if($bands == []){
             return response()->json(['Not found' => 'Artist not found.'], 404); 
         }
-        $bandId = $band->artists->items[0]->id;
-        $response = Http::withToken($request->header('Authorization'))->get('https://api.spotify.com/v1/artists/'.$bandId.'/albums?limit=50&market=AR');
-        $albums = json_decode($response->body());
+        $bandId = $bands[0]->id;
+        
+        $albums = $this->spotifyApiClient->getAlbumsByArtistId($bandId, $request->header('Authorization'));
         $album = new DTOAlbum();
         $album->name = $albums->items[0]->name;
         $album->released = $albums->items[0]->release_date;
